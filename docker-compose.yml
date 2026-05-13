@@ -40,9 +40,10 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+    # Só monta `src`: montar `./packages` inteiro apaga node_modules/.pnpm da imagem e quebra resolução (ex.: clsx em @insight/ui).
     volumes:
       - ./apps/api/src:/app/apps/api/src:cached
-      - ./packages:/app/packages:cached
+      - ./packages/shared/src:/app/packages/shared/src:cached
     healthcheck:
       test:
         [
@@ -73,7 +74,8 @@ services:
       - api
     volumes:
       - ./apps/web/src:/app/apps/web/src:cached
-      - ./packages:/app/packages:cached
+      - ./packages/shared/src:/app/packages/shared/src:cached
+      - ./packages/ui/src:/app/packages/ui/src:cached
     networks:
       - insight-net
 

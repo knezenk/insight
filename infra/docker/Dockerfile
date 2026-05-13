@@ -1,7 +1,11 @@
 # syntax=docker/dockerfile:1.7
 # INSIGHT · monorepo · API + Web (dev + production)
 # Targets: development-api · development-web · production-api · production-web
-# Instala dependências sem pnpm-lock.yaml (pnpm install resolve pelo package.json).
+#
+# Dependências:
+#   · build: estágio `deps` → `pnpm install --prod=false` (sem lockfile obrigatório)
+#   · dev:   `infra/docker/entrypoint-dev.sh` → reexecuta install no arranque (idempotente)
+#
 
 ARG NODE_VERSION=20-alpine
 FROM node:${NODE_VERSION} AS base
@@ -27,10 +31,13 @@ RUN pnpm --filter @insight/shared build && \
     pnpm --filter @insight/api build
 
 FROM deps AS development-api
+COPY infra/docker/entrypoint-dev.sh /usr/local/bin/entrypoint-dev.sh
+RUN chmod +x /usr/local/bin/entrypoint-dev.sh
 COPY apps/api apps/api/
 COPY packages/shared packages/shared/
 COPY tsconfig.base.json ./
-EXPOSE 3001
+EXPOSE 3002
+ENTRYPOINT ["/usr/local/bin/entrypoint-dev.sh"]
 CMD ["pnpm", "--filter", "@insight/api", "dev"]
 
 FROM base AS production-api
@@ -65,10 +72,13 @@ RUN pnpm --filter @insight/shared build && \
     pnpm --filter @insight/web build
 
 FROM deps AS development-web
+COPY infra/docker/entrypoint-dev.sh /usr/local/bin/entrypoint-dev.sh
+RUN chmod +x /usr/local/bin/entrypoint-dev.sh
 COPY apps/web apps/web/
 COPY packages packages/
 COPY tsconfig.base.json ./
 EXPOSE 5173
+ENTRYPOINT ["/usr/local/bin/entrypoint-dev.sh"]
 CMD ["pnpm", "--filter", "@insight/web", "dev", "--host", "0.0.0.0"]
 
 FROM nginx:1.27-alpine AS production-web
