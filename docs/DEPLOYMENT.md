@@ -41,7 +41,7 @@ FAKE_DATA=0                              # ATIVA modo real
 JWT_SECRET=<openssl rand -base64 64>     # CRÍTICO mudar do default
 LOG_PRETTY=false
 REDIS_URL=rediss://prod-cache:6380
-API_CORS_ORIGINS=https://insight.example.com
+API_CORS_ORIGINS=https://insight.iclipping.com.br
 
 CLIPPING_API_BASE_URL=https://clipping-prod.example.com
 CLIPPING_API_TOKEN=<from secrets manager>
@@ -112,8 +112,8 @@ spec:
 ### Smoke tests pós-deploy
 
 ```bash
-curl https://insight.example.com/healthz | jq
-curl -X POST https://insight.example.com/api/v1/auth/login \
+curl https://insight.iclipping.com.br/healthz | jq
+curl -X POST https://insight.iclipping.com.br/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"smoketest@...","password":"..."}' | jq
 ```

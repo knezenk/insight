@@ -47,9 +47,10 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 RUN addgroup -g 1001 nodejs && adduser -u 1001 -G nodejs -s /bin/sh -D nestjs && \
     chown -R nestjs:nodejs /app
 USER nestjs
-EXPOSE 3001
+ENV API_PORT=3002
+EXPOSE 3002
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-    CMD wget --quiet --tries=1 --spider http://localhost:3001/api/v1/health || exit 1
+    CMD-SHELL wget --quiet --tries=1 --spider "http://127.0.0.1:$$API_PORT/api/v1/health" || exit 1
 CMD ["node", "apps/api/dist/main.js"]
 
 FROM deps AS build-web

@@ -33,8 +33,10 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV:-development}
       - REDIS_URL=redis://redis:6379
+    # Porta no host: usa HOST_API_PORT (evita conflito com API_PORT num .env antigo).
+    # Dentro do container a API escuta em API_PORT definido em infra/docker/compose.stack.env (3002).
     ports:
-      - '${API_PORT:-3002}:${API_PORT:-3002}'
+      - '${HOST_API_PORT:-3002}:3002'
     depends_on:
       redis:
         condition: service_healthy
@@ -64,7 +66,7 @@ services:
     env_file:
       - infra/docker/compose.stack.env
     environment:
-      - VITE_API_BASE_URL=http://localhost:${API_PORT:-3002}/api/v1
+      - VITE_API_BASE_URL=http://localhost:${HOST_API_PORT:-3002}/api/v1
     ports:
       - '${WEB_PORT:-5173}:5173'
     depends_on:
