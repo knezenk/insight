@@ -50,7 +50,7 @@ USER nestjs
 ENV API_PORT=3002
 EXPOSE 3002
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-    CMD-SHELL wget --quiet --tries=1 --spider "http://127.0.0.1:$$API_PORT/api/v1/health" || exit 1
+    CMD wget --quiet --tries=1 --spider http://127.0.0.1:3002/api/v1/health || exit 1
 CMD ["node", "apps/api/dist/main.js"]
 
 FROM deps AS build-web
