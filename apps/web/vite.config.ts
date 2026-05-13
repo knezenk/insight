@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
       host: true,
       port: 5173,
       strictPort: false,
+      allowedHosts: ['insight.iclipping.com.br'],
       proxy: {
         '/api': {
           target: env.VITE_API_BASE_URL?.replace('/api/v1', '') ?? 'http://localhost:3001',
