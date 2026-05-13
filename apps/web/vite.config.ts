@@ -4,6 +4,16 @@ import path from 'node:path';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'VITE_');
+  const raw = loadEnv(mode, process.cwd(), '');
+  const viteApiBase = env.VITE_API_BASE_URL || '/api/v1';
+  // Browser: URL relativa (/api/v1) = mesmo host → sem CORS. O proxy abaixo encaminha para a API.
+  // Docker: defina API_PROXY_TARGET=http://api:3002 no compose (nome do serviço na rede).
+  // Local (pnpm dev): sem API_PROXY_TARGET, assume API em localhost na mesma porta do .env.
+  const apiProxyTarget =
+    raw.API_PROXY_TARGET?.trim() ||
+    (viteApiBase.startsWith('http')
+      ? viteApiBase.replace(/\/api\/v1\/?$/, '')
+      : 'http://127.0.0.1:3002');
   return {
     plugins: [react()],
     resolve: {
@@ -20,7 +30,7 @@ export default defineConfig(({ mode }) => {
       allowedHosts: ['insight.iclipping.com.br'],
       proxy: {
         '/api': {
-          target: env.VITE_API_BASE_URL?.replace('/api/v1', '') ?? 'http://localhost:3002',
+          target: apiProxyTarget,
           changeOrigin: true,
         },
       },
