@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 245 241 232;
+  --surface: 255 255 255;
+  --ink: 21 23 28;
+  --muted: 95 98 105;
+  --accent: 225 90 31;
+  --success: 31 141 90;
+  --warning: 224 160 21;
+  --danger: 200 53 30;
+  --info: 39 105 181;
+  --line: 226 218 194;
+}
+
+.dark {
+  --bg: 12 14 17;
+  --surface: 24 26 30;
+  --ink: 240 240 245;
+  --muted: 156 160 168;
+  --line: 60 62 68;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: rgb(var(--bg));
+  color: rgb(var(--ink));
+}
