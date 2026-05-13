@@ -94,7 +94,7 @@ cd insight
 # 2. Instalar dependências
 pnpm install
 
-# 3. Configurar ambiente
+# 3. Configurar ambiente (pnpm local; opcional para `docker compose` na raiz — ver infra/docker/compose.stack.env)
 cp .env.example .env
 
 # 4. Subir Redis local
@@ -106,8 +106,8 @@ pnpm dev
 
 Disponível em:
 
-- **API** → http://localhost:3001/api/v1
-- **API Docs (Swagger)** → http://localhost:3001/api/docs
+- **API** → http://localhost:3002/api/v1
+- **API Docs (Swagger)** → http://localhost:3002/api/docs
 - **Web** → http://localhost:5173
 
 ### Comandos úteis
@@ -138,7 +138,7 @@ pnpm docker:down      # encerra stack
 - [`docs/STRUCTURE.md`](docs/STRUCTURE.md) — organização dos diretórios
 - [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) — estratégia de deploy + produção
 - [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) — guia de contribuição
-- **Swagger live** → http://localhost:3001/api/docs (após subir a API)
+- **Swagger live** → http://localhost:3002/api/docs (após subir a API)
 
 ---
 

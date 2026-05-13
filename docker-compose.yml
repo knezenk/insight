@@ -2,6 +2,7 @@
 # INSIGHT · stack de desenvolvimento
 # Sobe Redis + API + Web em containers locais
 # Para produção: combine com docker-compose.prod.yml
+# Env padrão: infra/docker/compose.stack.env (não exige .env na raiz)
 # ─────────────────────────────────────────────────────────────────────
 
 services:
@@ -33,14 +34,14 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV:-development}
       - REDIS_URL=redis://redis:6379
-    # Porta no host: usa HOST_API_PORT (evita conflito com API_PORT num .env antigo).
-    # Dentro do container a API escuta em API_PORT definido em infra/docker/compose.stack.env (3002).
+    # HOST_API_PORT: porta no host (evita conflito se .env tiver API_PORT antigo).
+    # Dentro do container a API usa API_PORT em compose.stack.env (3002).
     ports:
       - '${HOST_API_PORT:-3002}:3002'
     depends_on:
       redis:
         condition: service_healthy
-    # Só monta `src`: montar `./packages` inteiro apaga node_modules/.pnpm da imagem e quebra resolução (ex.: clsx em @insight/ui).
+    # Só monta `src`: montar `./packages` inteiro apaga node_modules da imagem (pnpm).
     volumes:
       - ./apps/api/src:/app/apps/api/src:cached
       - ./packages/shared/src:/app/packages/shared/src:cached

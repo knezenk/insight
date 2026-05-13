@@ -1,0 +1,146 @@
+# ─────────────────────────────────────────────────────────────────────
+# INSIGHT · docker-compose
+#
+# Sobe API (NestJS) + Web (React + nginx) em containers.
+# SEM banco de dados (Insight é BFF · toda persistência vem de APIs externas).
+#
+# Credenciais e segredos: todos em .env (NUNCA commitados).
+# Use .env.example como template.
+#
+# Comandos:
+#   docker compose --profile dev up           ← dev com hot-reload
+#   docker compose --profile prod up -d       ← produção (detached)
+#   docker compose --profile prod up --build  ← força rebuild
+#   docker compose down                       ← encerra tudo
+#   docker compose logs -f api                ← logs da API
+# ─────────────────────────────────────────────────────────────────────
+
+name: insight
+
+x-common-env: &common-env
+  NODE_ENV: ${NODE_ENV:-production}
+  TZ: ${TZ:-America/Sao_Paulo}
+
+services:
+  # ════════════════════════════════════════════════════════════════════
+  # API · NestJS · BFF / API Gateway
+  # Modo PRODUÇÃO: imagem otimizada com binário compilado
+  # ════════════════════════════════════════════════════════════════════
+  api:
+    profiles: ['prod']
+    build:
+      context: ..
+      dockerfile: _container_setup/Dockerfile
+      target: api
+    image: insight-api:${IMAGE_TAG:-latest}
+    container_name: insight-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      <<: *common-env
+    ports:
+      - '${API_PORT:-3001}:3001'
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:3001/healthz']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '${API_CPU_LIMIT:-1.0}'
+          memory: ${API_MEM_LIMIT:-512M}
+        reservations:
+          memory: ${API_MEM_RESERVATION:-256M}
+    networks:
+      - insight-net
+    logging:
+      driver: json-file
+      options: { max-size: '10m', max-file: '5' }
+
+  # Modo DEV: bind mount no código + hot reload
+  api-dev:
+    profiles: ['dev']
+    build:
+      context: ..
+      dockerfile: _container_setup/Dockerfile
+      target: api-dev
+    container_name: insight-api-dev
+    env_file:
+      - .env
+    environment:
+      <<: *common-env
+      NODE_ENV: development
+      LOG_PRETTY: 'true'
+    ports:
+      - '${API_PORT:-3001}:3001'
+    volumes:
+      - ../apps/api/src:/app/apps/api/src:cached
+      - ../packages:/app/packages:cached
+    networks:
+      - insight-net
+
+  # ════════════════════════════════════════════════════════════════════
+  # WEB · React+Vite build estático servido por nginx
+  # ════════════════════════════════════════════════════════════════════
+  web:
+    profiles: ['prod']
+    build:
+      context: ..
+      dockerfile: _container_setup/Dockerfile
+      target: web
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api/v1}
+    image: insight-web:${IMAGE_TAG:-latest}
+    container_name: insight-web
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      <<: *common-env
+    ports:
+      - '${WEB_PORT:-8080}:80'
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost/']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - insight-net
+    logging:
+      driver: json-file
+      options: { max-size: '10m', max-file: '5' }
+
+  # Modo DEV: Vite dev server com HMR
+  web-dev:
+    profiles: ['dev']
+    build:
+      context: ..
+      dockerfile: _container_setup/Dockerfile
+      target: web-dev
+    container_name: insight-web-dev
+    env_file:
+      - .env
+    environment:
+      <<: *common-env
+      NODE_ENV: development
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:3001/api/v1}
+    ports:
+      - '${WEB_PORT:-5173}:5173'
+    volumes:
+      - ../apps/web/src:/app/apps/web/src:cached
+      - ../packages:/app/packages:cached
+    depends_on:
+      - api-dev
+    networks:
+      - insight-net
+
+networks:
+  insight-net:
+    driver: bridge
+    name: insight-net

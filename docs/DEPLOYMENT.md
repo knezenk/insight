@@ -12,8 +12,8 @@ pnpm dev
 ```
 
 Disponível em:
-- API · http://localhost:3001/api/v1
-- Swagger · http://localhost:3001/api/docs
+- API · http://localhost:3002/api/v1
+- Swagger · http://localhost:3002/api/docs
 - Web · http://localhost:5173
 
 ## Stack completa local (Docker)
@@ -91,12 +91,12 @@ spec:
           envFrom:
             - secretRef: { name: insight-api-env }
           ports:
-            - containerPort: 3001
+            - containerPort: 3002
           readinessProbe:
-            httpGet: { path: /api/v1/health, port: 3001 }
+            httpGet: { path: /api/v1/health, port: 3002 }
             periodSeconds: 10
           livenessProbe:
-            httpGet: { path: /api/v1/healthz, port: 3001 }
+            httpGet: { path: /api/v1/healthz, port: 3002 }
             periodSeconds: 15
           resources:
             limits: { cpu: 1000m, memory: 512Mi }
