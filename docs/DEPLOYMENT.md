@@ -56,8 +56,8 @@ SENTRY_DSN=<dsn>
 ### Build de imagens
 
 ```bash
-docker build -f infra/docker/api.Dockerfile --target production -t insight/api:1.0.0 .
-docker build -f infra/docker/web.Dockerfile --target production -t insight/web:1.0.0 .
+docker build -f infra/docker/Dockerfile --target production-api -t insight/api:1.0.0 .
+docker build -f infra/docker/Dockerfile --target production-web -t insight/web:1.0.0 .
 ```
 
 ### Push para registry

@@ -130,8 +130,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: infra/docker/api.Dockerfile
-          target: production
+          file: infra/docker/Dockerfile
+          target: production-api
           push: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -139,8 +139,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: infra/docker/web.Dockerfile
-          target: production
+          file: infra/docker/Dockerfile
+          target: production-web
           push: false
           cache-from: type=gha
           cache-to: type=gha,mode=max

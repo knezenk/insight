@@ -1,5 +1,3 @@
-version: '3.9'
-
 # ─────────────────────────────────────────────────────────────────────
 # OVERLAY de produção
 # docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
@@ -8,7 +6,7 @@ version: '3.9'
 services:
   api:
     build:
-      target: production
+      target: production-api
     environment:
       - NODE_ENV=production
       - LOG_PRETTY=false
@@ -24,7 +22,7 @@ services:
 
   web:
     build:
-      target: production
+      target: production-web
     environment:
       - NODE_ENV=production
     restart: always
