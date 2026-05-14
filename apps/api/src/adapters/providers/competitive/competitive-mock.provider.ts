@@ -6,7 +6,7 @@ import { MockDataGenerator } from '@/adapters/strategies/mock-data-generator';
 export class CompetitiveMockProvider {
   async get(workspace: string, from: string, to: string): Promise<CompetitiveDto> {
     const gen = new MockDataGenerator(`${workspace}-comp-${from}-${to}`);
-    const competitors = this.competitorsByWorkspace(workspace).map((c) => {
+    const competitors = this.competitorsByWorkspace(workspace).map((c, i) => {
       const volume = gen.intBetween(200, 1500);
       return { ...c, volume, ivn: Number((gen.intBetween(-20, 20) / 10).toFixed(1)), sov: 0, dominantNarrative: c.dominantNarrative ?? '' };
     });

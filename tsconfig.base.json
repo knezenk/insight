@@ -25,7 +25,13 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "useDefineForClassFields": false,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@insight/shared": ["packages/shared/src"],
+      "@insight/shared/*": ["packages/shared/src/*"],
+      "@insight/ui": ["packages/ui/src"],
+      "@insight/ui/*": ["packages/ui/src/*"]
+    }
   },
   "exclude": ["node_modules", "dist", "build", "coverage"]
 }

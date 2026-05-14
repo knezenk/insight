@@ -20,7 +20,7 @@ export class AuthController {
   @HttpCode(200)
   @ApiOperation({ summary: 'Login com email e senha · retorna access + refresh tokens' })
   @ApiBody({ type: LoginDto })
-  login(@Body() _body: LoginRequestDto, @CurrentUser() user: AuthUserDto): Promise<LoginResponseDto> {
+  login(@Body() body: LoginRequestDto, @CurrentUser() user: AuthUserDto): Promise<LoginResponseDto> {
     return this.auth.issueTokens(user);
   }
 

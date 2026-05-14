@@ -12,8 +12,8 @@ pnpm dev
 ```
 
 Disponível em:
-- API · http://localhost:3002/api/v1
-- Swagger · http://localhost:3002/api/docs
+- API · http://localhost:3001/api/v1
+- Swagger · http://localhost:3001/api/docs
 - Web · http://localhost:5173
 
 ## Stack completa local (Docker)
@@ -41,7 +41,7 @@ FAKE_DATA=0                              # ATIVA modo real
 JWT_SECRET=<openssl rand -base64 64>     # CRÍTICO mudar do default
 LOG_PRETTY=false
 REDIS_URL=rediss://prod-cache:6380
-API_CORS_ORIGINS=https://insight.iclipping.com.br
+API_CORS_ORIGINS=https://insight.example.com
 
 CLIPPING_API_BASE_URL=https://clipping-prod.example.com
 CLIPPING_API_TOKEN=<from secrets manager>
@@ -56,8 +56,8 @@ SENTRY_DSN=<dsn>
 ### Build de imagens
 
 ```bash
-docker build -f infra/docker/Dockerfile --target production-api -t insight/api:1.0.0 .
-docker build -f infra/docker/Dockerfile --target production-web -t insight/web:1.0.0 .
+docker build -f infra/docker/api.Dockerfile --target production -t insight/api:1.0.0 .
+docker build -f infra/docker/web.Dockerfile --target production -t insight/web:1.0.0 .
 ```
 
 ### Push para registry
@@ -91,12 +91,12 @@ spec:
           envFrom:
             - secretRef: { name: insight-api-env }
           ports:
-            - containerPort: 3002
+            - containerPort: 3001
           readinessProbe:
-            httpGet: { path: /api/v1/health, port: 3002 }
+            httpGet: { path: /api/v1/health, port: 3001 }
             periodSeconds: 10
           livenessProbe:
-            httpGet: { path: /api/v1/healthz, port: 3002 }
+            httpGet: { path: /api/v1/healthz, port: 3001 }
             periodSeconds: 15
           resources:
             limits: { cpu: 1000m, memory: 512Mi }
@@ -112,8 +112,8 @@ spec:
 ### Smoke tests pós-deploy
 
 ```bash
-curl https://insight.iclipping.com.br/healthz | jq
-curl -X POST https://insight.iclipping.com.br/api/v1/auth/login \
+curl https://insight.example.com/healthz | jq
+curl -X POST https://insight.example.com/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"smoketest@...","password":"..."}' | jq
 ```
