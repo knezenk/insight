@@ -36,6 +36,8 @@ RUN chmod +x /usr/local/bin/entrypoint-dev.sh
 COPY apps/api apps/api/
 COPY packages/shared packages/shared/
 COPY tsconfig.base.json ./
+# Evita corrida nest --watch: apaga dist antes do 1.º emit do tsc → MODULE_NOT_FOUND.
+RUN pnpm --filter @insight/shared build && pnpm --filter @insight/api build
 EXPOSE 3002
 ENTRYPOINT ["/usr/local/bin/entrypoint-dev.sh"]
 CMD ["pnpm", "--filter", "@insight/api", "dev"]
