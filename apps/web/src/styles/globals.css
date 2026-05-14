@@ -2,25 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --bg: 245 241 232;
-  --surface: 255 255 255;
-  --ink: 21 23 28;
-  --muted: 95 98 105;
-  --accent: 225 90 31;
-  --success: 31 141 90;
-  --warning: 224 160 21;
-  --danger: 200 53 30;
-  --info: 39 105 181;
-  --line: 226 218 194;
-}
+/* ─────────────────────────────────────────────────────────────────────
+   INSIGHT · Design System Editorial
+   Paleta paper · tipografia Fraunces serif + Inter sans
+───────────────────────────────────────────────────────────────────── */
 
-.dark {
-  --bg: 12 14 17;
-  --surface: 24 26 30;
-  --ink: 240 240 245;
-  --muted: 156 160 168;
-  --line: 60 62 68;
+:root {
+  /* Paleta vibrante editorial */
+  --bg: 245 241 232;            /* papel claro com calor sutil */
+  --bg-alt: 234 227 206;
+  --surface: 255 255 255;
+  --ink: 21 23 28;              /* preto profundo */
+  --ink-2: 45 48 56;
+  --muted: 95 98 105;
+  --muted-2: 154 157 164;
+  --line: 226 218 194;
+  --line-2: 201 191 158;
+
+  /* Cores funcionais saturadas */
+  --accent: 225 90 31;          /* laranja Target360 */
+  --accent-2: 242 107 31;
+  --accent-soft: 255 226 208;
+  --navy: 30 58 95;
+  --navy-2: 45 84 133;
+  --navy-soft: 214 224 238;
+
+  --pos: 31 141 90;             /* verde mais vivo */
+  --pos-2: 45 179 116;
+  --pos-soft: 209 235 220;
+  --neg: 200 53 30;             /* vermelho mais vivo */
+  --neg-2: 229 71 36;
+  --neg-soft: 251 213 204;
+  --warn: 224 160 21;           /* mostarda vibrante */
+  --warn-2: 244 183 46;
+  --warn-soft: 252 229 180;
+  --info: 39 105 181;
+  --info-soft: 214 229 244;
+  --plum: 139 42 120;
+  --plum-soft: 240 214 234;
 }
 
 * {
@@ -42,3 +61,48 @@ body {
   background: rgb(var(--bg));
   color: rgb(var(--ink));
 }
+
+/* Tipografia editorial · serif para títulos */
+.font-display {
+  font-family: 'Fraunces', Georgia, serif;
+  letter-spacing: -0.018em;
+}
+
+/* Imports do Google Fonts via index.html · não duplicar aqui */
+
+/* Eyebrow · pequeno texto institucional acima de títulos */
+.eyebrow {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: rgb(var(--muted));
+}
+
+/* Pílulas tonais */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1;
+}
+.pill-pos { background: rgb(var(--pos-soft)); color: rgb(var(--pos)); }
+.pill-neg { background: rgb(var(--neg-soft)); color: rgb(var(--neg)); }
+.pill-warn { background: rgb(var(--warn-soft)); color: rgb(var(--warn)); }
+.pill-info { background: rgb(var(--info-soft)); color: rgb(var(--info)); }
+
+/* Numeração tabular para alinhamento de dígitos */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Scrollbar discreta */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.18); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }

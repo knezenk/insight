@@ -68,7 +68,6 @@ services:
     env_file:
       - infra/docker/compose.stack.env
     environment:
-      # URL relativa: o browser fala com o Vite (mesmo host); o proxy encaminha /api → serviço api (evita CORS).
       - VITE_API_BASE_URL=/api/v1
       - API_PROXY_TARGET=http://api:3002
     ports:

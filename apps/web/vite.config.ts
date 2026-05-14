@@ -8,7 +8,6 @@ export default defineConfig(({ mode }) => {
   const viteApiBase = env.VITE_API_BASE_URL || '/api/v1';
   // Browser: URL relativa (/api/v1) = mesmo host → sem CORS. O proxy encaminha para a API.
   // Docker: defina API_PROXY_TARGET=http://api:3002 no compose (nome do serviço na rede).
-  // Local (pnpm dev): sem API_PROXY_TARGET, assume API em 127.0.0.1:3002.
   const apiProxyTarget =
     raw.API_PROXY_TARGET?.trim() ||
     (viteApiBase.startsWith('http')
