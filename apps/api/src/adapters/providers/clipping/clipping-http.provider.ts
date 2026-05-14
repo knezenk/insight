@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import axios, { type AxiosInstance } from 'axios';
 
 import type { ClippingFilterDto, ClippingItemDto, Paginated } from '@insight/shared';
@@ -13,7 +13,6 @@ import type { ClippingProvider } from './clipping.provider.interface';
  */
 @Injectable()
 export class ClippingHttpProvider implements ClippingProvider {
-  private readonly logger = new Logger(ClippingHttpProvider.name);
   private readonly client: AxiosInstance;
 
   constructor(private readonly config: AppConfigService) {

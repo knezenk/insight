@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import axios, { type AxiosInstance } from 'axios';
 
 import type { Indice360Dto, IvnScoreDto, FinancialImpactDto, ReputationalRiskDto } from '@insight/shared';
@@ -9,7 +9,6 @@ import type { ScoresProvider, ScoresQuery } from './scores.provider.interface';
 
 @Injectable()
 export class ScoresHttpProvider implements ScoresProvider {
-  private readonly logger = new Logger(ScoresHttpProvider.name);
   private readonly client: AxiosInstance;
 
   constructor(private readonly config: AppConfigService) {
