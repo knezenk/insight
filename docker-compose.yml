@@ -1,9 +1,8 @@
-version: '3.9'
-
 # ─────────────────────────────────────────────────────────────────────
 # INSIGHT · stack de desenvolvimento
 # Sobe Redis + API + Web em containers locais
 # Para produção: combine com docker-compose.prod.yml
+# Env padrão: infra/docker/compose.stack.env (não exige .env na raiz)
 # ─────────────────────────────────────────────────────────────────────
 
 services:
@@ -26,25 +25,32 @@ services:
   api:
     build:
       context: .
-      dockerfile: infra/docker/api.Dockerfile
-      target: ${BUILD_TARGET:-development}
+      dockerfile: infra/docker/Dockerfile
+      target: development-api
     container_name: insight-api
     restart: unless-stopped
     env_file:
-      - .env
+      - infra/docker/compose.stack.env
     environment:
       - NODE_ENV=${NODE_ENV:-development}
       - REDIS_URL=redis://redis:6379
+    # HOST_API_PORT: porta no host (evita conflito se .env tiver API_PORT antigo).
+    # Dentro do container a API usa API_PORT em compose.stack.env (3002).
     ports:
-      - '${API_PORT:-3001}:3001'
+      - '${HOST_API_PORT:-3002}:3002'
     depends_on:
       redis:
         condition: service_healthy
+    # Só monta `src`: montar `./packages` inteiro apaga node_modules da imagem (pnpm).
     volumes:
       - ./apps/api/src:/app/apps/api/src:cached
-      - ./packages:/app/packages:cached
+      - ./packages/shared/src:/app/packages/shared/src:cached
     healthcheck:
-      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:3001/api/v1/health']
+      test:
+        [
+          'CMD-SHELL',
+          'wget --quiet --tries=1 --spider "http://127.0.0.1:$${API_PORT}/api/v1/health" || exit 1',
+        ]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -55,21 +61,24 @@ services:
   web:
     build:
       context: .
-      dockerfile: infra/docker/web.Dockerfile
-      target: ${BUILD_TARGET:-development}
+      dockerfile: infra/docker/Dockerfile
+      target: development-web
     container_name: insight-web
     restart: unless-stopped
     env_file:
-      - .env
+      - infra/docker/compose.stack.env
     environment:
-      - VITE_API_BASE_URL=http://localhost:3001/api/v1
+      # URL relativa: o browser fala com o Vite (mesmo host); o proxy encaminha /api → serviço api (evita CORS).
+      - VITE_API_BASE_URL=/api/v1
+      - API_PROXY_TARGET=http://api:3002
     ports:
       - '${WEB_PORT:-5173}:5173'
     depends_on:
       - api
     volumes:
       - ./apps/web/src:/app/apps/web/src:cached
-      - ./packages:/app/packages:cached
+      - ./packages/shared/src:/app/packages/shared/src:cached
+      - ./packages/ui/src:/app/packages/ui/src:cached
     networks:
       - insight-net
 

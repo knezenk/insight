@@ -60,8 +60,9 @@ insight/
 │
 ├── infra/
 │   ├── docker/
-│   │   ├── api.Dockerfile         Multi-stage (deps · build · dev · prod)
-│   │   └── web.Dockerfile         Multi-stage (build → nginx)
+│   │   ├── Dockerfile             Monorepo (API + Web · dev + prod targets)
+│   │   ├── compose.stack.env      Defaults para docker compose (sem .env obrigatório)
+│   │   └── entrypoint-dev.sh      pnpm install no arranque dos containers dev
 │   └── nginx/
 │       ├── nginx.conf             Gateway de produção (TLS, rate limit, gzip)
 │       └── web.conf               Server estático do bundle React
